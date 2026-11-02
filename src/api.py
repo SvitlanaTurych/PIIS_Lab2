@@ -83,7 +83,7 @@ async def predict(file: UploadFile = File(...)):
         feats = waveform_to_features(to_mono_16k(wave, sr)).unsqueeze(0)
         with torch.inference_mode():
             probs = torch.softmax(state["model"](feats), dim=1)[0]
-    except Exception as e:
+    except (RuntimeError, ValueError, TypeError) as e:
         raise HTTPException(400, f"Не вдалося обробити аудіо: {e}")
     latency_ms = (time.perf_counter() - t0) * 1000
 
