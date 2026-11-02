@@ -1,5 +1,6 @@
 from torch import nn
 
+
 def block(cin, cout):
     return nn.Sequential(
         nn.Conv2d(cin, cout, 3, padding=1),
