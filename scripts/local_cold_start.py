@@ -15,7 +15,7 @@ while True:
     try:
         urllib.request.urlopen("http://localhost:8000/health", timeout=1)
         break
-    except Exception:
+    except (urllib.error.URLError, TimeoutError):
         time.sleep(0.05)
 print(f"cold start: {time.perf_counter() - t0:.2f} s")
 print(f"RAM (RSS): {psutil.Process(p.pid).memory_info().rss / 1e6:.1f} MB")

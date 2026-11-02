@@ -1,4 +1,5 @@
 """FastAPI-сервіс інференсу. Конфігурація через MODEL_PATH, PORT, LOG_LEVEL, MODEL_VERSION."""
+# ruff: noqa: B008
 import io
 import json
 import logging
@@ -74,7 +75,7 @@ async def predict(file: UploadFile = File(...)):
         raise HTTPException(400, "Файл завеликий (максимум 5 МБ)")
     try:
         wave, sr = sf.read(io.BytesIO(raw), dtype="float32")
-    except Exception as e:
+    except (sf.LibsndfileError, ValueError) as e:
         raise HTTPException(400, f"Некоректний аудіофайл (очікується .wav): {e}")
 
     t0 = time.perf_counter()

@@ -1,5 +1,4 @@
-import torch.nn as nn
-
+from torch import nn
 
 def block(cin, cout):
     return nn.Sequential(

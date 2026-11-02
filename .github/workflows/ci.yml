@@ -1,4 +1,6 @@
+
 name: ci
+
 on:
   push:
     branches: [main]
@@ -7,29 +9,44 @@ on:
     inputs:
       acc_threshold:
         description: "Поріг accuracy, % (поставте 99, щоб показати падіння пайплайна)"
+        required: false
         default: "80"
+        type: string
 
 env:
   ACC_THRESHOLD: ${{ github.event.inputs.acc_threshold || '80' }}
-  EPOCHS: "3"   # менше епох у CI, щоб прискорити збірку
+  EPOCHS: "3"
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install Ruff
+        run: |
+          python -m pip install --upgrade pip
+          pip install ruff
 
       - name: Lint
         run: |
-          pip install ruff
           ruff check src/ scripts/
 
-      - uses: docker/setup-buildx-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
       - name: Build image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: .
+          file: ./Dockerfile
           load: true
           tags: kws-api:${{ github.sha }}
           build-args: |
@@ -41,25 +58,60 @@ jobs:
       - name: Run container
         run: |
           docker run -d --name kws -p 8000:8000 kws-api:${{ github.sha }}
+
           for i in $(seq 1 30); do
-            curl -sf http://localhost:8000/health && break
+            if curl -sf http://localhost:8000/health; then
+              echo "Container is healthy"
+              exit 0
+            fi
             sleep 2
           done
 
+          echo "Container did not become healthy"
+          docker logs kws || true
+          exit 1
+
       - name: Smoke test
         run: |
+          set -e
+
+          echo "Checking model-info..."
           curl -sf http://localhost:8000/model-info
-          curl -sf -X POST -F "file=@samples/yes.wav" http://localhost:8000/predict
-          # некоректний файл має давати 400, а не 500
-          CODE=$(curl -s -o /dev/null -w "%{http_code}" -X POST -F "file=@README.md" http://localhost:8000/predict)
+
+          echo "Checking valid WAV prediction..."
+          curl -sf -X POST \
+            -F "file=@samples/yes.wav" \
+            http://localhost:8000/predict
+
+          echo "Checking invalid file handling..."
+          CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+            -X POST \
+            -F "file=@README.md" \
+            http://localhost:8000/predict)
+
+          echo "HTTP status: $CODE"
           test "$CODE" = "400"
 
       - name: Accuracy gate
         run: |
-          ACC=$(curl -s http://localhost:8000/model-info | jq '.accuracy')
+          set -e
+
+          ACC=$(curl -sf http://localhost:8000/model-info | jq -r '.accuracy')
+
           echo "accuracy=$ACC threshold=$ACC_THRESHOLD"
-          python -c "import sys; sys.exit(0 if $ACC >= $ACC_THRESHOLD else 1)"
+
+          python -c "import sys; acc=float('$ACC'); threshold=float('$ACC_THRESHOLD'); sys.exit(0 if acc >= threshold else 1)"
 
       - name: Logs on failure
         if: failure()
-        run: docker logs kws
+        run: |
+          if docker ps -a --format '{{.Names}}' | grep -qx kws; then
+            docker logs kws
+          else
+            echo "Container kws was not created."
+          fi
+
+      - name: Cleanup
+        if: always()
+        run: |
+          docker rm -f kws 2>/dev/null || true

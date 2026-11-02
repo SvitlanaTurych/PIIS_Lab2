@@ -12,8 +12,7 @@ import requests
 
 def pct(v, p):
     v = sorted(v)
-    return v[min(len(v) - 1, int(round(p / 100 * (len(v) - 1))))]
-
+    return v[min(len(v) - 1, round(p / 100 * (len(v) - 1)))]
 
 def main():
     ap = argparse.ArgumentParser()
