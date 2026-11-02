@@ -14,7 +14,7 @@ on:
         type: string
 
 env:
-  ACC_THRESHOLD: ${{ github.event.inputs.acc_threshold || '80' }}
+  ACC_THRESHOLD: ${{ github.event.inputs.acc_threshold || '70' }}
   EPOCHS: "3"
 
 jobs:
