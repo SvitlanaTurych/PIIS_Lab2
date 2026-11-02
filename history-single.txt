@@ -1,0 +1,24 @@
+IMAGE          CREATED             CREATED BY                                      SIZE      COMMENT
+0daf17b15b36   18 minutes ago      CMD ["uvicorn" "src.api:app" "--host" "0.0.0…   0B        buildkit.dockerfile.v0
+<missing>      18 minutes ago      HEALTHCHECK {Test:[CMD-SHELL python -c "impo…   0B        buildkit.dockerfile.v0
+<missing>      18 minutes ago      EXPOSE [8000/tcp]                               0B        buildkit.dockerfile.v0
+<missing>      18 minutes ago      USER appuser                                    0B        buildkit.dockerfile.v0
+<missing>      18 minutes ago      RUN |1 EPOCHS=10 /bin/sh -c useradd --create…   5.87GB    buildkit.dockerfile.v0
+<missing>      33 minutes ago      ENV MODEL_PATH=/app/artifacts/model.pt PYTHO…   0B        buildkit.dockerfile.v0
+<missing>      33 minutes ago      RUN |1 EPOCHS=10 /bin/sh -c python -m src.tr…   5.87GB    buildkit.dockerfile.v0
+<missing>      43 minutes ago      COPY src/ ./src/ # buildkit                     73.7kB    buildkit.dockerfile.v0
+<missing>      43 minutes ago      RUN |1 EPOCHS=10 /bin/sh -c pip install --no…   1.19GB    buildkit.dockerfile.v0
+<missing>      46 minutes ago      COPY requirements-train.txt . # buildkit        12.3kB    buildkit.dockerfile.v0
+<missing>      46 minutes ago      RUN |1 EPOCHS=10 /bin/sh -c apt-get update &…   6.94MB    buildkit.dockerfile.v0
+<missing>      About an hour ago   WORKDIR /app                                    8.19kB    buildkit.dockerfile.v0
+<missing>      About an hour ago   ARG EPOCHS=10                                   0B        buildkit.dockerfile.v0
+<missing>      3 weeks ago         CMD ["python3"]                                 0B        buildkit.dockerfile.v0
+<missing>      3 weeks ago         RUN /bin/sh -c set -eux;  for src in idle3 p…   16.4kB    buildkit.dockerfile.v0
+<missing>      3 weeks ago         RUN /bin/sh -c set -eux;   savedAptMark="$(a…   46MB      buildkit.dockerfile.v0
+<missing>      3 weeks ago         ENV PYTHON_SHA256=c61fe9b1a1a7ec2a0b0388e664…   0B        buildkit.dockerfile.v0
+<missing>      3 weeks ago         ENV PYTHON_VERSION=3.10.22                      0B        buildkit.dockerfile.v0
+<missing>      3 weeks ago         ENV GPG_KEY=A035C8C19219BA821ECEA86B64E628F8…   0B        buildkit.dockerfile.v0
+<missing>      3 weeks ago         RUN /bin/sh -c set -eux;  apt-get update;  a…   4.95MB    buildkit.dockerfile.v0
+<missing>      3 weeks ago         ENV LANG=C.UTF-8                                0B        buildkit.dockerfile.v0
+<missing>      3 weeks ago         ENV PATH=/usr/local/bin:/usr/local/sbin:/usr…   0B        buildkit.dockerfile.v0
+<missing>      4 weeks ago         # debian.sh --arch 'amd64' out/ 'trixie' '@1…   87.7MB    debuerreotype 0.17

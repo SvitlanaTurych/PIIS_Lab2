@@ -1,0 +1,31 @@
+IMAGE          CREATED             CREATED BY                                      SIZE      COMMENT
+f4991238df8f   49 minutes ago      CMD ["sh" "-c" "uvicorn src.api:app --host 0…   0B        buildkit.dockerfile.v0
+<missing>      49 minutes ago      HEALTHCHECK {Test:[CMD-SHELL python -c "impo…   0B        buildkit.dockerfile.v0
+<missing>      49 minutes ago      EXPOSE [8000/tcp]                               0B        buildkit.dockerfile.v0
+<missing>      49 minutes ago      USER appuser                                    0B        buildkit.dockerfile.v0
+<missing>      49 minutes ago      RUN |3 MODEL_VERSION=1.0.0 GIT_COMMIT=HEAD
+n…             69.6kB              buildkit.dockerfile.v0
+<missing>      49 minutes ago      ENV MODEL_PATH=/app/artifacts/model.pt PORT=…   0B        buildkit.dockerfile.v0
+<missing>      49 minutes ago      COPY /build/artifacts ./artifacts # buildkit    123kB     buildkit.dockerfile.v0
+<missing>      59 minutes ago      COPY src/ ./src/ # buildkit                     73.7kB    buildkit.dockerfile.v0
+<missing>      59 minutes ago      RUN |3 MODEL_VERSION=1.0.0 GIT_COMMIT=HEAD
+n…             989MB               buildkit.dockerfile.v0
+<missing>      About an hour ago   COPY requirements-api.txt . # buildkit   12.3kB    buildkit.dockerfile.v0
+<missing>      About an hour ago   RUN |3 MODEL_VERSION=1.0.0 GIT_COMMIT=HEAD
+n…             6.94MB              buildkit.dockerfile.v0
+<missing>      About an hour ago   WORKDIR /app                                    8.19kB    buildkit.dockerfile.v0
+<missing>      About an hour ago   LABEL org.opencontainers.image.title=kws-api…   0B        buildkit.dockerfile.v0
+<missing>      About an hour ago   ARG BUILD_DATE=2026-11-02T15:15:43Z             0B        buildkit.dockerfile.v0
+<missing>      About an hour ago   ARG GIT_COMMIT=HEAD
+none           0B                  buildkit.dockerfile.v0
+<missing>      About an hour ago   ARG MODEL_VERSION=1.0.0                         0B        buildkit.dockerfile.v0
+<missing>      3 weeks ago         CMD ["python3"]                                 0B        buildkit.dockerfile.v0
+<missing>      3 weeks ago         RUN /bin/sh -c set -eux;  for src in idle3 p…   16.4kB    buildkit.dockerfile.v0
+<missing>      3 weeks ago         RUN /bin/sh -c set -eux;   savedAptMark="$(a…   46MB      buildkit.dockerfile.v0
+<missing>      3 weeks ago         ENV PYTHON_SHA256=c61fe9b1a1a7ec2a0b0388e664…   0B        buildkit.dockerfile.v0
+<missing>      3 weeks ago         ENV PYTHON_VERSION=3.10.22                      0B        buildkit.dockerfile.v0
+<missing>      3 weeks ago         ENV GPG_KEY=A035C8C19219BA821ECEA86B64E628F8…   0B        buildkit.dockerfile.v0
+<missing>      3 weeks ago         RUN /bin/sh -c set -eux;  apt-get update;  a…   4.95MB    buildkit.dockerfile.v0
+<missing>      3 weeks ago         ENV LANG=C.UTF-8                                0B        buildkit.dockerfile.v0
+<missing>      3 weeks ago         ENV PATH=/usr/local/bin:/usr/local/sbin:/usr…   0B        buildkit.dockerfile.v0
+<missing>      4 weeks ago         # debian.sh --arch 'amd64' out/ 'trixie' '@1…   87.7MB    debuerreotype 0.17

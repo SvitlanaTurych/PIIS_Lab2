@@ -1,0 +1,5 @@
+# Для локального запуску (venv): навчання, бенчмарки, лінтер
+-r requirements-train.txt
+requests==2.32.3
+psutil==5.9.8
+ruff==0.4.9

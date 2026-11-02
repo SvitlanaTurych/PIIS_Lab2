@@ -1,0 +1,65 @@
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      acc_threshold:
+        description: "Поріг accuracy, % (поставте 99, щоб показати падіння пайплайна)"
+        default: "80"
+
+env:
+  ACC_THRESHOLD: ${{ github.event.inputs.acc_threshold || '80' }}
+  EPOCHS: "3"   # менше епох у CI, щоб прискорити збірку
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Lint
+        run: |
+          pip install ruff
+          ruff check src/ scripts/
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Build image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          load: true
+          tags: kws-api:${{ github.sha }}
+          build-args: |
+            EPOCHS=${{ env.EPOCHS }}
+            GIT_COMMIT=${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Run container
+        run: |
+          docker run -d --name kws -p 8000:8000 kws-api:${{ github.sha }}
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:8000/health && break
+            sleep 2
+          done
+
+      - name: Smoke test
+        run: |
+          curl -sf http://localhost:8000/model-info
+          curl -sf -X POST -F "file=@samples/yes.wav" http://localhost:8000/predict
+          # некоректний файл має давати 400, а не 500
+          CODE=$(curl -s -o /dev/null -w "%{http_code}" -X POST -F "file=@README.md" http://localhost:8000/predict)
+          test "$CODE" = "400"
+
+      - name: Accuracy gate
+        run: |
+          ACC=$(curl -s http://localhost:8000/model-info | jq '.accuracy')
+          echo "accuracy=$ACC threshold=$ACC_THRESHOLD"
+          python -c "import sys; sys.exit(0 if $ACC >= $ACC_THRESHOLD else 1)"
+
+      - name: Logs on failure
+        if: failure()
+        run: docker logs kws
